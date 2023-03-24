@@ -1,0 +1,51 @@
+<html>
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="raphael-2.1.4.min.js"></script>
+		<script src="justgage.js"></script>
+
+		<script>
+			var accessToken = "a645530554d9faa83d798f6c530252052fffdf49";
+			var deviceID = "3f004a000e504b464d323520"
+			var variable = "gradoC";
+			var url = "https://api.particle.io/v1/devices/"+deviceID+"/"+variable;
+
+			//Funcion que recive los datos y el estatus del json
+			function callback(data, status){
+				//verifica si se recibio correctamnete el json
+				if (status == "success") {
+					//en la variable temp se almacena la temperatura del json
+					temp = parseFloat(data.result);
+					//se formatea a 2 digitos
+					temp = temp.toFixed(2);
+					//se refresca el json
+					g.refresh(temp);
+					//como un relay llamando a una funcion
+					setTimeout(getReading, 1000);
+				}
+				else {
+					alert("There was a problem");
+				}
+			}
+			
+			//funcion que actualiza constantemente
+			function getReading(){
+				$.get(url, {access_token: accessToken}, callback);
+			}
+		</script>
+	</head>	
+
+	<body>
+		<div id="gauge" class="200x160px"></div>
+		<script>
+			var g = new JustGage({
+				id: "gauge",
+				value: 0,
+				min: 0,
+				max: 400,
+				title: "Temperatura (C)"
+			});
+			getReading();
+		</script>
+	</body>
+</html>
